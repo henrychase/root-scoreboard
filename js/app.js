@@ -4,7 +4,7 @@
    ========================================================== */
     // VALORES OFICIAIS DE ALCANCE (REACH) DA IMAGEM
     const FACTIONS = [
-      { id: 'gatos', name: 'Marquesa de Cat (Gatos)', reach: 10 },
+      { id: 'gatos', name: 'Marquês de Cat (Gatos)', reach: 10 },
       { id: 'ratos', name: 'Empresa Florestal S.A. (Senhor das Centenas)', reach: 9 },
       { id: 'guardioes', name: 'Guardiões em Ferro', reach: 8 },
       { id: 'toupeiras', name: 'Ducado Subterrâneo', reach: 8 },
@@ -36,9 +36,18 @@
 
     // INICIALIZAÇÃO
     document.addEventListener('DOMContentLoaded', () => {
-      renderPlayersList();
-      resetMatchForm();
-    });
+  renderPlayersList();
+  resetMatchForm();
+
+  const newPlayerInput = document.getElementById('new-player-name');
+
+  newPlayerInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      addPlayer();
+    }
+  });
+});
 
     // SISTEMA DE ABAS
     function switchTab(tabId) {
@@ -75,15 +84,45 @@
       localStorage.setItem('root_players', JSON.stringify(players));
     }
 
-    function addPlayer() {
-      const input = document.getElementById('new-player-name');
-      const name = input.value.trim();
-      if (name && !players.includes(name)) {
-        players.push(name);
-        input.value = '';
-        renderPlayersList();
-      }
+    function normalizePlayerName(name) {
+  return name
+    .trim()
+    .replace(/\s+/g, ' ');
     }
+
+    function addPlayer() {
+  const input = document.getElementById('new-player-name');
+  const name = normalizePlayerName(input.value);
+
+  if (!name) {
+    alert('Digite o nome do jogador.');
+    input.focus();
+    return;
+  }
+
+  const normalizedName = name.toLocaleLowerCase('pt-BR');
+
+  const playerAlreadyExists = players.some((player) => {
+    return (
+      normalizePlayerName(player).toLocaleLowerCase('pt-BR') ===
+      normalizedName
+    );
+  });
+
+  if (playerAlreadyExists) {
+    alert('Já existe um jogador cadastrado com esse nome.');
+    input.focus();
+    input.select();
+    return;
+  }
+
+  players.push(name);
+  input.value = '';
+
+  renderPlayersList();
+
+  input.focus();
+}
 
     function removePlayer(index) {
       players.splice(index, 1);
