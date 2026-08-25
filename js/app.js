@@ -141,42 +141,104 @@
     }
 
     function saveMatch() {
-      const map = document.getElementById('match-map').value;
-      const winCondition = document.getElementById('match-win-condition').value;
-      
-      const rows = document.querySelectorAll('#match-players-container > div');
-      if (rows.length < 2) {
-        alert('É necessário ter pelo menos 2 jogadores para registrar uma partida.');
-        return;
-      }
+  const map = document.getElementById('match-map').value;
+  const winCondition = document.getElementById(
+    'match-win-condition'
+  ).value;
 
-      let matchData = {
-        id: Date.now(),
-        date: new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'}),
-        map: map,
-        winCondition: winCondition,
-        results: []
-      };
+  const rows = Array.from(
+    document.querySelectorAll('#match-players-container > div')
+  );
 
-      rows.forEach(row => {
-        const player = row.querySelector('.match-player-select').value;
-        const faction = row.querySelector('.match-faction-select').value;
-        const score = parseInt(row.querySelector('.match-score-input').value) || 0;
-        const isWinner = row.querySelector('.match-winner-radio').checked;
+  // Uma partida precisa ter pelo menos dois participantes.
+  if (rows.length < 2) {
+    alert(
+      'É necessário ter pelo menos 2 jogadores para registrar uma partida.'
+    );
+    return;
+  }
 
-        matchData.results.push({
-          player,
-          faction,
-          score,
-          isWinner
-        });
-      });
+  // Converte cada linha do formulário em um objeto de resultado.
+  const results = rows.map((row) => {
+    const playerSelect = row.querySelector('.match-player-select');
+    const factionSelect = row.querySelector('.match-faction-select');
+    const scoreInput = row.querySelector('.match-score-input');
+    const winnerRadio = row.querySelector('.match-winner-radio');
 
-      matches.push(matchData);
-      localStorage.setItem('root_matches', JSON.stringify(matches));
-      alert('Partida registrada com sucesso!');
-      resetMatchForm();
-    }
+    return {
+      player: playerSelect.value,
+      faction: factionSelect.value,
+      score: Number(scoreInput.value),
+      isWinner: winnerRadio.checked
+    };
+  });
+
+  // Confere se todas as linhas possuem jogador e facção.
+  const hasEmptyFields = results.some((result) => {
+    return !result.player || !result.faction;
+  });
+
+  if (hasEmptyFields) {
+    alert('Todas as linhas precisam ter um jogador e uma facção.');
+    return;
+  }
+
+  // Confere se as pontuações estão entre 0 e 30.
+  const hasInvalidScore = results.some((result) => {
+    return (
+      !Number.isInteger(result.score) ||
+      result.score < 0 ||
+      result.score > 30
+    );
+  });
+
+  if (hasInvalidScore) {
+    alert('A pontuação de cada jogador deve ser um número entre 0 e 30.');
+    return;
+  }
+
+  // Compara o total de jogadores com o total de nomes únicos.
+  const playerNames = results.map((result) => result.player);
+  const uniquePlayerNames = new Set(playerNames);
+
+  if (uniquePlayerNames.size !== playerNames.length) {
+    alert('O mesmo jogador não pode aparecer mais de uma vez na partida.');
+    return;
+  }
+
+  // Uma partida precisa ter exatamente um vencedor.
+  const winners = results.filter((result) => result.isWinner);
+
+  if (winners.length !== 1) {
+    alert('Selecione exatamente um vencedor para registrar a partida.');
+    return;
+  }
+
+  const matchData = {
+    id: Date.now(),
+    date:
+      new Date().toLocaleDateString('pt-BR') +
+      ' ' +
+      new Date().toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit'
+      }),
+    map,
+    winCondition,
+    results
+  };
+
+  matches.push(matchData);
+
+  localStorage.setItem(
+    'root_matches',
+    JSON.stringify(matches)
+  );
+
+  alert('Partida registrada com sucesso!');
+
+  resetMatchForm();
+}
 
     // --- EXCLUIR PARTIDA ---
     function deleteMatch(matchId) {
