@@ -47,6 +47,17 @@
       addPlayer();
     }
   });
+    const backupFileInput = document.getElementById(
+    'backup-file-input'
+  );
+
+  backupFileInput.addEventListener(
+    'change',
+    (event) => {
+      const selectedFile = event.target.files[0];
+      importBackupFile(selectedFile);
+    }
+  );
 });
 
     // SISTEMA DE ABAS
@@ -128,6 +139,176 @@
       players.splice(index, 1);
       renderPlayersList();
     }
+// --- BACKUP E RESTAURAÇÃO DOS DADOS ---
+
+function exportBackup() {
+  const backupData = {
+    schemaVersion: 1,
+    exportedAt: new Date().toISOString(),
+    players,
+    matches
+  };
+
+  const jsonContent = JSON.stringify(
+    backupData,
+    null,
+    2
+  );
+
+  const fileBlob = new Blob(
+    [jsonContent],
+    {
+      type: 'application/json'
+    }
+  );
+
+  const downloadUrl = URL.createObjectURL(fileBlob);
+  const downloadLink = document.createElement('a');
+
+  const currentDate = new Date()
+    .toISOString()
+    .slice(0, 10);
+
+  downloadLink.href = downloadUrl;
+  downloadLink.download =
+    `root-scoreboard-backup-${currentDate}.json`;
+
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  downloadLink.remove();
+
+  URL.revokeObjectURL(downloadUrl);
+}
+
+function openBackupFilePicker() {
+  const fileInput = document.getElementById(
+    'backup-file-input'
+  );
+
+  fileInput.value = '';
+  fileInput.click();
+}
+
+function validateBackupData(backupData) {
+  if (
+    !backupData ||
+    typeof backupData !== 'object' ||
+    Array.isArray(backupData)
+  ) {
+    return false;
+  }
+
+  if (backupData.schemaVersion !== 1) {
+    return false;
+  }
+
+  if (!Array.isArray(backupData.players)) {
+    return false;
+  }
+
+  if (!Array.isArray(backupData.matches)) {
+    return false;
+  }
+
+  const hasInvalidPlayer = backupData.players.some(
+    (player) => {
+      return (
+        typeof player !== 'string' ||
+        !normalizePlayerName(player)
+      );
+    }
+  );
+
+  if (hasInvalidPlayer) {
+    return false;
+  }
+
+  const hasInvalidMatch = backupData.matches.some(
+    (match) => {
+      return (
+        !match ||
+        typeof match !== 'object' ||
+        !Array.isArray(match.results)
+      );
+    }
+  );
+
+  if (hasInvalidMatch) {
+    return false;
+  }
+
+  return true;
+}
+
+function importBackupFile(file) {
+  if (!file) {
+    return;
+  }
+
+  const fileReader = new FileReader();
+
+  fileReader.addEventListener('load', () => {
+    try {
+      const backupData = JSON.parse(
+        fileReader.result
+      );
+
+      if (!validateBackupData(backupData)) {
+        alert(
+          'O arquivo selecionado não é um backup válido do Root Scoreboard.'
+        );
+        return;
+      }
+
+      const shouldImport = confirm(
+        'A importação substituirá os jogadores e as partidas atuais. Deseja continuar?'
+      );
+
+      if (!shouldImport) {
+        return;
+      }
+
+      players = backupData.players.map(
+        (player) => normalizePlayerName(player)
+      );
+
+      matches = backupData.matches;
+
+      localStorage.setItem(
+        'root_players',
+        JSON.stringify(players)
+      );
+
+      localStorage.setItem(
+        'root_matches',
+        JSON.stringify(matches)
+      );
+
+      alert(
+        'Backup importado com sucesso. A página será recarregada.'
+      );
+
+      window.location.reload();
+    } catch (error) {
+      console.error(
+        'Erro ao importar o backup:',
+        error
+      );
+
+      alert(
+        'Não foi possível ler o arquivo. Verifique se ele contém um JSON válido.'
+      );
+    }
+  });
+
+  fileReader.addEventListener('error', () => {
+    alert(
+      'O navegador não conseguiu ler o arquivo selecionado.'
+    );
+  });
+
+  fileReader.readAsText(file);
+}
 
     // --- FORMULÁRIO DE REGISTRO DE PARTIDA ---
     function resetMatchForm() {

@@ -100,6 +100,44 @@
         <ul id="players-list" class="divide-y divide-gray-700 bg-gray-800 rounded">
           <!-- Lista de jogadores JS -->
         </ul>
+        <!-- Backup e restauração dos dados -->
+<div class="mt-8 border-t border-gray-700 pt-6">
+  <h3 class="text-lg font-semibold text-emerald-400">
+    Backup dos dados
+  </h3>
+
+  <p class="mt-1 mb-4 text-sm text-gray-400">
+    Exporte jogadores e partidas para guardar uma cópia ou
+    transferir os dados para outro navegador.
+  </p>
+
+  <div class="flex flex-wrap gap-3">
+    <button
+      type="button"
+      onclick="exportBackup()"
+      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium"
+    >
+      <i class="fa-solid fa-download"></i>
+      Exportar backup
+    </button>
+
+    <button
+      type="button"
+      onclick="openBackupFilePicker()"
+      class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded font-medium"
+    >
+      <i class="fa-solid fa-upload"></i>
+      Importar backup
+    </button>
+
+    <input
+      type="file"
+      id="backup-file-input"
+      accept=".json,application/json"
+      class="hidden"
+    >
+  </div>
+</div>
       </div>
     </section>
 
