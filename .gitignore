@@ -1,0 +1,29 @@
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Arquivos temporários
+*.tmp
+*.temp
+*.bak
+*.log
+
+# Pastas locais de trabalho
+drafts/
+temp/
+downloads/
+
+# Arquivos de edição de imagem
+*.psd
+*.xcf
+*.sai
+*.sai2
+
+# Dependências futuras
+node_modules/
+dist/

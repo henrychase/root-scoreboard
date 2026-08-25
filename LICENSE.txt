@@ -1,0 +1,7 @@
+Copyright (c) 2026.
+
+O código-fonte deste projeto encontra-se em processo de definição de licença.
+
+Imagens, marcas, ilustrações, nomes de jogos e demais recursos de terceiros
+não estão abrangidos por qualquer futura licença aplicada ao código-fonte e
+permanecem sujeitos aos direitos de seus respectivos titulares.
