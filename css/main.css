@@ -1,0 +1,20 @@
+/* ==========================================================
+   ROOT SCOREBOARD
+   Folha de estilos principal
+   ========================================================== */
+
+/* Configuração geral da página */
+body {
+  background-color: #2d3748;
+  color: #f7fafc;
+}
+
+/* Fundo verde utilizado no cabeçalho */
+.bg-root-green {
+  background-color: #2e5a44;
+}
+
+/* Fundo escuro utilizado nos cards */
+.bg-root-card {
+  background-color: #1a202c;
+}
