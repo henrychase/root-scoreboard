@@ -5,16 +5,34 @@ Aplicação web para registrar partidas de Root, gerenciar jogadores, acompanhar
 ## Funcionalidades atuais
 
 - Cadastro e exclusão de jogadores
+- Normalização de nomes e bloqueio de duplicidades
+- Cadastro de jogadores com a tecla Enter
 - Registro de partidas
+- Validação de jogadores, pontuações e vencedor
 - Seleção de mapa e condição de vitória
 - Registro de facções e pontuações
 - Ranking de jogadores
 - Ranking de facções
 - Gráficos de vitórias
-- Histórico de partidas
+- Histórico e exclusão de partidas
 - Randomizador de mapas, jogadores e facções
 - Validação de alcance mínimo das facções
+- Exportação de backup em JSON
+- Importação de backup com validação básica
 - Armazenamento local no navegador
+
+## Backup dos dados
+
+A aplicação permite exportar jogadores e partidas para um
+arquivo JSON e restaurá-los posteriormente.
+
+A importação substitui os dados existentes no navegador.
+Recomenda-se exportar um backup antes de realizar a
+restauração.
+
+## Versão atual
+
+`v0.2.0`
 
 ## Tecnologias
 
